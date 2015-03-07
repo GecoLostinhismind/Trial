@@ -1,6 +1,12 @@
 package com.example.ciudadturistica2;
 
 
+import java.util.List;
+
+
+
+
+
 
 
 
@@ -9,11 +15,13 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,29 +29,103 @@ public class MainActivity extends ListActivity {
 
 	private static final int INFOAPP = Menu.FIRST;
     private static final int SALIR = Menu.FIRST+1;
+    private SimpleCursorAdapter dataAdapter;
+    
+    //prueba
+    private DatabaseHandler db;
+    
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	
+	//DatabaseHandler db = new DatabaseHandler(this);Esto o lo de abajo.
+	db = new DatabaseHandler(this);
 	
-	String[] values = new String [] {"Estatua", "Puente", "Parque",
-	        "Bar", "Río", "Roca", "Plaza", "Teatro",
-	        "Ruinas", "KFC"};
+	/**
+     * CRUD Operations
+     * */
+    // Inserting Contacts
+    Log.d("Insert: ", "Inserting ..");
+    db.addPlaces(new Places("Puente Romano"));
+    db.addPlaces(new Places("Ermita de la Cruz"));
+    db.addPlaces(new Places("Dolmen"));
+    db.addPlaces(new Places("Iglesia Parroquial"));
+    db.addPlaces(new Places("Estatua de Don Pelayo"));
+    db.addPlaces(new Places("Aula del Reino de Asturias"));
+    db.addPlaces(new Places("Capilla de SanAntonio"));
+    db.addPlaces(new Places("Palacio Pintu"));
+    db.addPlaces(new Places("Casa Dago"));
+    
+    
+    
+    //PRUEBA
+    displayListView();
+    
+   
+    
+    // Reading all contacts
+   // Log.d("Reading: ", "Reading all contacts..");
+   // List<Places> places = db.getAllPlaces();       
+
+   // for (Places pl : places) {
+     //   String log = "Id: "+pl.getID()+" ,Name: " + pl.getName();
+            // Writing Contacts to log
+    //Log.d("Name: ", log);
+    
+   // }
+	
+	//String[] values = new String [] {"Estatua", "Puente", "Parque",
+	  //      "Bar", "Río", "Roca", "Plaza", "Teatro",
+	    //    "Ruinas", "KFC"};
 		
 		//**Este Array usa un adapter que usa por defecto el android.R.layout.simple_list_item_1, sin un layout customizado.
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
-		setListAdapter(adapter);
+		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
+		//setListAdapter(adapter);
 		//**
+		
+		//PlacesArray adapter = new PlacesArray (this,values);
+		//setListAdapter(adapter);
 	}
+	
+	
+	//PRUEBA
+	 public void displayListView() {
+    	 
+   	  Cursor cursor = db.getAllPlaces();
+   	 
+   	  // The desired columns to be bound
+   	  String[] columns = new String[] {
+   	    DatabaseHandler.KEY_NAME
+   	  };
+   	 
+   	  // the XML defined views which the data will be bound to
+   	  int[] to = new int[] {
+   	    R.id.label,
+   	  };
+   	 
+   	  // create the adapter using the cursor pointing to the desired data
+   	  //as well as the layout information
+   	  dataAdapter = new SimpleCursorAdapter(
+   	    this, R.layout.rowplaces,
+   	    cursor,
+   	    columns,
+   	    to,
+   	    0);
+   	 
+   	  
+   	  // Assign adapter to ListView
+   	  setListAdapter(dataAdapter);
+   }
+   //PRUEBA
+	
+	
 	 protected void onListItemClick(ListView l, View v, int position, long id) {		 		 
 				 
 		Intent intent = new Intent(this, opciones_monumento.class);
 		startActivity(intent);
-		 		
-		 
-		 
+		 			 
 	 }
 
 	@Override
