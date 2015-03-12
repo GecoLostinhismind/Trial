@@ -5,7 +5,8 @@ public class Places {
 	//private variables
 	int _id;
 	String _name;
-	
+	String _lat;
+	String _long;
 	
 	//Empty constructor
 	public Places() {
@@ -13,10 +14,12 @@ public class Places {
 	}
 	
 	// constructor
-	public Places(int id, String name){
+	public Places(int id, String name, String lat, String lon){
 		this._id = id;
 		this._name = name;
-			
+		this._lat = lat;
+		_long = lon;
+		
 		}
 	
 	// constructor
@@ -43,6 +46,30 @@ public class Places {
 	// setting name
 		public void setName(String name){
 			this._name = name;
+		}
+
+		public String get_name() {
+			return _name;
+		}
+
+		public void set_name(String _name) {
+			this._name = _name;
+		}
+
+		public String get_long() {
+			return _long;
+		}
+
+		public void set_long(String _long) {
+			this._long = _long;
+		}
+
+		public String get_lat() {
+			return _lat;
+		}
+
+		public void set_lat(String _lat) {
+			this._lat = _lat;
 		}
 			
 	}

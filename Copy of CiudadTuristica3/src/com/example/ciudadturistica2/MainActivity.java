@@ -1,23 +1,30 @@
 package com.example.ciudadturistica2;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,7 +34,8 @@ public class MainActivity extends Activity {
     private static final int SALIR = Menu.FIRST+1;
     
     private PlacesDbAdapter dbHelper;
-    private SimpleCursorAdapter dataAdapter;
+    private Adapter dataAdapter;
+    private ArrayList<String> places;
     
      
     
@@ -36,16 +44,24 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		dbHelper = new PlacesDbAdapter(this);
-	     dbHelper.open();
+	   
 	    
-	     //Clean all data
-	     dbHelper.deleteAllPlaces();
+	   
 	     //Add some data
-	     dbHelper.insertSomePlaces();
+	     //dbHelper.insertSomePlaces();
 	    
-	     //Generate ListView from SQLite Database
-	     displayListView();
+	    
 	     
+		  
+		  places = new ArrayList<String>();
+		  // create the adapter using the cursor pointing to the desired data
+		  //as well as the layout information
+		  dataAdapter = new Adapter(this, R.layout.rowplaces, places);
+		 
+		  ListView listView = (ListView) findViewById(R.id.listView1);
+		  // Assign adapter to ListView
+		  listView.setAdapter(this.dataAdapter);
+
 
 	 	//String[] values = new String [] {"Estatua", "Puente", "Parque",
 	 	  //      "Bar", "Río", "Roca", "Plaza", "Teatro",
@@ -60,40 +76,11 @@ public class MainActivity extends Activity {
 	 		//setListAdapter(adapter);
 	}
 	
-	private void displayListView() {
-		 
-		 
-		  Cursor cursor = dbHelper.fetchAllPlaces();
-		 
-		  // The desired columns to be bound
-		  String[] columns = new String[] {
-			//PlacesDbAdapter.KEY_CODE,
-		    PlacesDbAdapter.KEY_NAME,
-		   // CountriesDbAdapter.KEY_CONTINENT,
-		    //CountriesDbAdapter.KEY_REGION
-		  };
-		 
-		  // the XML defined views which the data will be bound to
-		  int[] to = new int[] {
-		    //R.id.code,
-		    R.id.name,
-		    //R.id.continent,
-		    //R.id.region,
-		  };
-		 
-		  // create the adapter using the cursor pointing to the desired data
-		  //as well as the layout information
-		  dataAdapter = new SimpleCursorAdapter(
-		    this, R.layout.rowplaces,
-		    cursor,
-		    columns,
-		    to,
-		    0);
-		 
-		  ListView listView = (ListView) findViewById(R.id.listView1);
-		  // Assign adapter to ListView
-		  listView.setAdapter(dataAdapter);
-    
+	
+		
+	
+			  
+		  
 		  
 		  //listView.setOnItemClickListener(new OnItemClickListener() {
 			//   @Override
@@ -104,7 +91,7 @@ public class MainActivity extends Activity {
 			   		//}			   
 		  	//});
 		  
-	}
+	
   
 	
 	
@@ -122,18 +109,19 @@ public class MainActivity extends Activity {
 	}
 	
 	 public boolean onMenuItemSelected(int featureId, MenuItem item) {
-	        super.onMenuItemSelected(featureId, item);
-	              switch(item.getItemId()) {
-	              case INFOAPP:
-	            	  aboutDialog();
-	            	  break;
-	              case SALIR:
-	            	  exitAppFunction();
-	            	  break;
+		 super.onMenuItemSelected(featureId, item);
+	   
+		 
+		 switch(item.getItemId()) {
+	     	case INFOAPP: aboutDialog(); break;
+	        case SALIR: exitAppFunction(); break;
+	        default:;
+	            	  
 	              }
 	              
-	              return true;
+	     return true;
 	       }
+
 	 
 	 private void aboutDialog(){
 		 
@@ -166,4 +154,41 @@ public class MainActivity extends Activity {
 			AlertDialog alert = builder.create(); 	
 			alert.show();
 		}
+	 
+	 private class Adapter extends ArrayAdapter<String> {
+		private ArrayList<String> mitems;
+		
+		public Adapter(Context context, int textViewResourceId, ArrayList<String> mitems) {
+			super(context, textViewResourceId, mitems);
+			this.mitems = mitems;
+		}
+		
+		//@Override
+		//public View getView(int position, View convertView, ViewGroup parent) {
+				//LayoutInflater inflater =  (LayoutInflater).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				//View rowView = inflater.inflate(R.layout.rowplaces, null);
+				//TextView textView = (TextView) rowView.findViewById(R.id.name);
+				//ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
+				//textView.setText(mitems.get(position));
+				//Change the icon for windows and iphone. 
+				//imageView.setImageResource(R.drawable.icon);			
+			//	return rowView;		
+		//}
+		
+		@Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+                View v = convertView;
+                if (v == null) {
+                    LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    v = vi.inflate(R.layout.rowplaces, null);
+                }
+                String place = mitems.get(position);
+                if (place != null){
+                	TextView row_textview = (TextView) v.findViewById(R.id.name);
+                	if(row_textview !=null)
+                		row_textview.setText(place);
+                }
+                return v;
+        }
+	}
 }
