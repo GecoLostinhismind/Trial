@@ -17,10 +17,8 @@ public class PlacesDbAdapter extends SQLiteOpenHelper {
 	
 	
 	public static final String KEY_ROWID = "_id";
-	//public static final String KEY_CODE = "code";
+	//public static final String KEY_PIC = "pic";
 	public static final String KEY_NAME = "name";
-	//public static final String KEY_ICON = "continent";
-	//public static final String KEY_LOCATION = "region";
 	public static final String KEY_LAT = "latitude";
 	public static final String KEY_LNG = "longitude";
 	
@@ -39,9 +37,7 @@ public class PlacesDbAdapter extends SQLiteOpenHelper {
 	  "CREATE TABLE if not exists " + SQLITE_TABLE + " (" +
 	  KEY_ROWID + " INTEGER PRIMARY KEY," +
 	  KEY_NAME +" TEXT,"+KEY_LAT+" TEXT,"+KEY_LNG+" TEXT"+")";
-	  //KEY_CONTINENT + "," +
-	  //KEY_REGION + "," +
-	  //" UNIQUE (" + KEY_CODE +"));";
+	 
 	 
 	 PlacesDbAdapter(Context context) {
 		 super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -65,13 +61,13 @@ public class PlacesDbAdapter extends SQLiteOpenHelper {
 		 
 	 
 	
-	public void createPlace(Places p) { //Podemos ponerle todas las string que queramos con String code, String Localitation y asi!
+	public void createPlace(Places p) { //aqui tengo escritos los initialValues de KEY_NAME, KEY_LAT, KEY_LNG pero no se introducir valores sobre estas variables!)
 		SQLiteDatabase mdb = this.getWritableDatabase();		 
 		ContentValues initialValues = new ContentValues();
 			//initialValues.put(KEY_CODE, code);
 			initialValues.put(KEY_NAME, p.getName());
-			//initialValues.put(KEY_LAT, p.getLatittude());
-			//initialValues.put(KEY_LNG, p.getLongitude());
+			initialValues.put(KEY_LAT, p.getLat());
+			initialValues.put(KEY_LNG, p.getLng());
 		
 				 
 			try{	// Inserting Row
@@ -88,7 +84,8 @@ public class PlacesDbAdapter extends SQLiteOpenHelper {
 				  mdb.close();
 	}
 	
-	
+	//Esta lista es la que pretendo recuperar para que me muestre en la activity principal solo los nombres de los lugares (si al final es posible mostar icono al lado del nombre genial sino da igual)
+	//La latitud y ubicación si fuese posible no mostrarla y utilizarla solo cuando se las requiera en los momentos de mostrar en el mapa, la brujula etc. vamos que se utilicen de manera interna y no en la intefaz no se si me he explicado bien
 	public List<String> getPlaces() {
 		List<String> places = new ArrayList<String>();
 		
@@ -106,8 +103,28 @@ public class PlacesDbAdapter extends SQLiteOpenHelper {
         return places;
 	}
 	
+	//Copie lo que me enseñaste con la idea de que este metodo sirviese para recuperar los datos  y usarlos en las tareas de ubicacion y AR, pero aaki me quedé...
+	public List<String> getLocations() {
+		List<String> places = new ArrayList<String>();
+		
+		String selectQuery = "SELECT" + KEY_LAT + KEY_LNG + "FROM" + SQLITE_TABLE + "ORDER BY" + KEY_LAT + KEY_LNG;
+		
+		SQLiteDatabase mdb = this.getWritableDatabase();
+		Cursor mCursor = mdb.rawQuery(selectQuery, null);
+		
+		 if (mCursor.moveToFirst()) {
+	            do {
+	            	places.add(mCursor.getString(0));
+	            }while(mCursor.moveToNext());
+	        }
+		
+		return places;
+		
+	}
+	
+	//este era el metodo antiguo que usaba para incluir los lugares en la lista y de alguna manera funcionaba, pero al ir cambiando codigo la cosa dejo de rular.
 	//public void insertSomePlaces() {
-		 
+		 //LOS ITEMS (LUGARES) SON LOS DEFINITIVOS.
 		  //createPlace("Puente Romano");
 		  //createPlace("Ermita de la Cruz");
 		  //createPlace("Dolmen");

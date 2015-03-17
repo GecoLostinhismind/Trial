@@ -20,16 +20,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
+	//variables para el options menu
 	private static final int INFOAPP = Menu.FIRST;
     private static final int SALIR = Menu.FIRST+1;
     
@@ -45,60 +48,55 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		dbHelper = new PlacesDbAdapter(this);
 	   
-	    
-	   
-	     //Add some data
-	     //dbHelper.insertSomePlaces();
+		//Estos son los lugares para el menu principal que he he estado intentando meter y no he conseguido.
+		dbHelper.createPlace(new Places("Puente Romano"));
+		dbHelper.createPlace(new Places("Ermita de la Cruz"));
+		dbHelper.createPlace(new Places("Dolmen"));
+		dbHelper.createPlace(new Places("Iglesia Parroquial"));
+		dbHelper.createPlace(new Places("Estatua de DonPelayo"));
+		dbHelper.createPlace(new Places("Aula del reino de Asturias"));
+		dbHelper.createPlace(new Places("Capilla de San Antonio"));
+		dbHelper.createPlace(new Places("Palacio Pintu"));
+		dbHelper.createPlace(new Places("Plaza del mercado"));
+		dbHelper.createPlace(new Places("Casa Dago"));
 	    
 	    
 	     
 		  
 		  places = new ArrayList<String>();
-		  // create the adapter using the cursor pointing to the desired data
-		  //as well as the layout information
+		  
 		  dataAdapter = new Adapter(this, R.layout.rowplaces, places);
-		 
+		  
 		  ListView listView = (ListView) findViewById(R.id.listView1);
 		  // Assign adapter to ListView
 		  listView.setAdapter(this.dataAdapter);
+		  
+		  //Aquí necesitaria un OnItemClickListener que abriese un Context Menu para cada item.
+		  //El Context Menu constaría de 4 opciones:
+		  	//-Mostrar en el mapa (muestra la ubicacion en el mapa, con su marker y con zoom sobre el marker (creo que se llama Camera Animate)
+		   //-Usar Brujula (inicia la activity de AR con la camara y el icono que representa a la brujula indicandole en que direccion se encuentra en relación a él (la tipica brujula de videojuego vamos)
+		  //-Galeria (Abre una galeria de fotos del lugar)
+		  //-Me queda la opcion de que la camara reconozca que esta enfocando un lugar de la lista y haga la foto y quede almacenada en la galería del lugar correspondiente. Podría ser un botón al lado de la list, no lo se!
 
-
-	 	//String[] values = new String [] {"Estatua", "Puente", "Parque",
-	 	  //      "Bar", "Río", "Roca", "Plaza", "Teatro",
-	 	    //    "Ruinas", "KFC"};
-	 		
-	 		//**Este Array usa un adapter que usa por defecto el android.R.layout.simple_list_item_1, sin un layout customizado.
-	 		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
-	 		//setListAdapter(adapter);
-	 		//**
-	 		
-	 		//PlacesArray adapter = new PlacesArray (this,values);
-	 		//setListAdapter(adapter);
+		  //Este boton es una prueba, ya que no conseguía sacar la base de datos probe si era capaz 
+		  //de iniciarme la activity por la buenas de mapa.java e incluir manualmente los markers en el mapa.		  
+		  Button mapButton = (Button)findViewById(R.id.MapView);
+		  mapButton.setOnClickListener(new OnClickListener() {
+	        	
+	        	public void onClick(View v) {
+	        		Intent intentmapa = new Intent(MainActivity.this, Mapa.class);
+	        		startActivity(intentmapa);
+	        	}
+	        });
+		  
+		  
 	}
 	
 	
 		
 	
-			  
-		  
-		  
-		  //listView.setOnItemClickListener(new OnItemClickListener() {
-			//   @Override
-			  // public void onItemClick(AdapterView<?> listView, View view,
-			    // int position, long id) {
-				  // Intent intent = new Intent(this, opciones_monumento.class);
-					//startActivity(intent);
-			   		//}			   
-		  	//});
 		  
 	
-  
-	
-	
-	 
-		 			 
-	 
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -113,8 +111,8 @@ public class MainActivity extends Activity {
 	   
 		 
 		 switch(item.getItemId()) {
-	     	case INFOAPP: aboutDialog(); break;
-	        case SALIR: exitAppFunction(); break;
+	     	case INFOAPP: aboutDialog(); break; //Ventana que explica algunos datos de la app(Para que sirve, quien la ha hecho)
+	        case SALIR: exitAppFunction(); break;//salir de la app
 	        default:;
 	            	  
 	              }
@@ -122,7 +120,8 @@ public class MainActivity extends Activity {
 	     return true;
 	       }
 
-	 
+	 //El dialogo obtenido por INFOAPP
+	 //S fuera posible dejar esto así para que yo luego añada el texto necesario...
 	 private void aboutDialog(){
 		 
 		 Dialog dial = new Dialog(MainActivity.this);
@@ -154,7 +153,9 @@ public class MainActivity extends Activity {
 			AlertDialog alert = builder.create(); 	
 			alert.show();
 		}
-	 
+	
+	 //El adapter que me enseñaste de tu baase de datos. Con el pretendo recuperar la base datos y volcar los datos en la ListView de esta activity. 
+	 //Supongo que al no tener items añadidos correctamente en la base de datos pues no me muestra nada, que es el gran problema que llevó a mi desesperación.
 	 private class Adapter extends ArrayAdapter<String> {
 		private ArrayList<String> mitems;
 		
@@ -163,30 +164,18 @@ public class MainActivity extends Activity {
 			this.mitems = mitems;
 		}
 		
-		//@Override
-		//public View getView(int position, View convertView, ViewGroup parent) {
-				//LayoutInflater inflater =  (LayoutInflater).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				//View rowView = inflater.inflate(R.layout.rowplaces, null);
-				//TextView textView = (TextView) rowView.findViewById(R.id.name);
-				//ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-				//textView.setText(mitems.get(position));
-				//Change the icon for windows and iphone. 
-				//imageView.setImageResource(R.drawable.icon);			
-			//	return rowView;		
-		//}
-		
 		@Override
         public View getView(int position, View convertView, ViewGroup parent) {
                 View v = convertView;
                 if (v == null) {
                     LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    v = vi.inflate(R.layout.rowplaces, null);
+                    v = vi.inflate(R.layout.rowplaces, null);//rowplaces es el layout de cada celda.
                 }
-                String place = mitems.get(position);
-                if (place != null){
+                String places = mitems.get(position);
+                if (places != null){
                 	TextView row_textview = (TextView) v.findViewById(R.id.name);
                 	if(row_textview !=null)
-                		row_textview.setText(place);
+                		row_textview.setText(places);
                 }
                 return v;
         }

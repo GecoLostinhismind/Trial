@@ -6,7 +6,7 @@ public class Places {
 	int _id;
 	String _name;
 	String _lat;
-	String _long;
+	String _lng;
 	
 	//Empty constructor
 	public Places() {
@@ -14,11 +14,11 @@ public class Places {
 	}
 	
 	// constructor
-	public Places(int id, String name, String lat, String lon){
+	public Places(int id, String name, String lat, String lng){
 		this._id = id;
 		this._name = name;
 		this._lat = lat;
-		_long = lon;
+		_lng = lng;
 		
 		}
 	
@@ -48,27 +48,20 @@ public class Places {
 			this._name = name;
 		}
 
-		public String get_name() {
-			return _name;
+
+		public String getLng() {
+			return _lng;
 		}
 
-		public void set_name(String _name) {
-			this._name = _name;
+		public void setLng(String _lng) {
+			this._lng = _lng;
 		}
 
-		public String get_long() {
-			return _long;
-		}
-
-		public void set_long(String _long) {
-			this._long = _long;
-		}
-
-		public String get_lat() {
+		public String getLat() {
 			return _lat;
 		}
 
-		public void set_lat(String _lat) {
+		public void setLat(String _lat) {
 			this._lat = _lat;
 		}
 			
